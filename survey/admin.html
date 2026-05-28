@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 — 예술인의 목소리</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--lime:#CCFF00;--orange:#FF6B2B;--green:#1A8C5A;--ink:#111;--bg:#F5F2EB;--sur:#fff;--serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif;}
+body{background:var(--bg);font-family:var(--sans);min-height:100vh;}
+.hdr{background:var(--ink);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;}
+.hdr-t{font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;}
+.back{color:rgba(255,255,255,.5);font-size:12px;font-weight:700;text-decoration:none;}
+.back:hover{color:#fff;}
+main{max-width:640px;margin:0 auto;padding:2rem 1.25rem 5rem;}
+.login-wrap{max-width:360px;margin:4rem auto;}
+.page-title{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:1.5rem;}
+.fg{margin-bottom:12px;}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.06em;margin-bottom:5px;}
+.fi{width:100%;padding:12px 14px;border:1.5px solid var(--ink);font-size:14px;font-family:var(--sans);background:var(--sur);}
+.fi:focus{outline:none;border-color:var(--green);}
+.fs{width:100%;padding:12px 14px;border:1.5px solid var(--ink);font-size:14px;font-family:var(--sans);background:var(--sur);}
+.btn{width:100%;padding:13px;background:var(--ink);color:#fff;border:none;font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;margin-top:4px;}
+.btn:hover{background:var(--green);}
+.btn.org{background:var(--orange);}
+.btn.org:hover{background:#c0392b;}
+.msg{font-size:12px;font-weight:500;padding:8px 12px;margin-top:8px;}
+.msg.ok{background:#E8F9F0;color:var(--green);border:1px solid var(--green);}
+.msg.err{background:#FFF0E8;color:var(--orange);border:1px solid var(--orange);}
+.tabs{display:flex;border-bottom:2px solid var(--ink);margin-bottom:1.5rem;}
+.tab{padding:10px 18px;background:transparent;border:none;font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;color:rgba(17,17,17,.4);border-bottom:3px solid transparent;margin-bottom:-2px;}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink);}
+.sec-t{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--ink);margin-bottom:1rem;padding-bottom:8px;border-bottom:1.5px solid var(--ink);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sv-item{background:var(--sur);border:1.5px solid var(--ink);padding:1rem 1.25rem;margin-bottom:10px;}
+.sv-q{font-size:14px;font-weight:500;color:var(--ink);line-height:1.5;margin-bottom:5px;}
+.sv-meta{font-size:11px;color:rgba(17,17,17,.4);margin-bottom:10px;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.ib{padding:7px 14px;border:1.5px solid var(--ink);background:transparent;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--sans);}
+.ib:hover{background:var(--lime);}
+.ib.r{border-color:var(--orange);color:var(--orange);}
+.ib.r:hover{background:var(--orange);color:#fff;}
+.ib.c{background:var(--orange);color:#fff;border-color:var(--orange);}
+.ib.c:hover{background:#c0392b;}
+.ans-wrap{margin-top:1rem;display:none;border-top:1px dashed rgba(17,17,17,.15);padding-top:1rem;}
+.ans-item{padding:10px 12px;border-left:3px solid var(--lime);margin-bottom:8px;background:var(--bg);font-size:13px;line-height:1.6;}
+.ans-date{font-size:10px;color:rgba(17,17,17,.35);margin-top:4px;font-weight:700;}
+.spin{text-align:center;padding:2rem;font-size:13px;color:rgba(17,17,17,.4);}
+.empty{text-align:center;padding:2rem;font-size:13px;color:rgba(17,17,17,.4);}
+@media(max-width:480px){.g2{grid-template-columns:1fr;}main{padding:1.5rem 1rem 4rem;}}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <span class="hdr-t">관리자 — 예술인의 목소리</span>
+  <a href="index.html" class="back">← 메인으로</a>
+</header>
+<main id="main">
+  <div class="login-wrap">
+    <p class="page-title">관리자 로그인</p>
+    <div class="fg"><label class="fl">비밀번호</label><input class="fi" type="password" id="pw" onkeydown="if(event.key==='Enter')login()"></div>
+    <button class="btn" onclick="login()">로그인</button>
+    <div id="pw-msg"></div>
+  </div>
+</main>
+<script>
+var SB  = 'https://ekwqfkcfeehhssxkzrxm.supabase.co';
+var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrd3Fma2NmZWVoaHNzeGt6cnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NTk4OTksImV4cCI6MjA5NTQzNTg5OX0.js2SaqzgE8nI6EV6DO_lNscNTRSQuCKczmwIbucXrU8';
+var PW  = 'artists2026';
+var TAB = 'surveys';
+
+function req(path, opts) {
+  var o = opts || {};
+  o.headers = Object.assign({
+    'apikey': KEY, 'Authorization': 'Bearer '+KEY,
+    'Content-Type': 'application/json', 'Prefer': 'return=representation',
+    'Cache-Control': 'no-cache', 'Pragma': 'no-cache'
+  }, o.headers || {});
+  o.cache = 'no-store';
+  return fetch(SB+'/rest/v1/'+path, o);
+}
+
+function del(path) {
+  return fetch(SB+'/rest/v1/'+path, {
+    method: 'DELETE',
+    cache: 'no-store',
+    headers: {
+      'apikey': KEY, 'Authorization': 'Bearer '+KEY,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal',
+      'Cache-Control': 'no-cache', 'Pragma': 'no-cache'
+    }
+  });
+}
+
+function login() {
+  var pw = document.getElementById('pw');
+  if (pw && pw.value === PW) {
+    sessionStorage.setItem('adm', '1');
+    showAdmin();
+  } else {
+    document.getElementById('pw-msg').innerHTML = '<div class="msg err">비밀번호가 틀렸습니다</div>';
+  }
+}
+
+function showAdmin() {
+  document.getElementById('main').innerHTML =
+    '<div class="tabs">' +
+      '<button class="tab'+(TAB==='surveys'?' on':'')+'" onclick="setTab(\'surveys\')">설문 관리</button>' +
+      '<button class="tab'+(TAB==='settings'?' on':'')+'" onclick="setTab(\'settings\')">텍스트 설정</button>' +
+    '</div>' +
+    '<div id="tc"><div class="spin">불러오는 중...</div></div>';
+  fetchTab();
+}
+
+function setTab(t) { TAB = t; showAdmin(); }
+
+async function fetchTab() {
+  var tc = document.getElementById('tc');
+  if (!tc) return;
+  try {
+    if (TAB === 'surveys') {
+      var r1 = await req('surveys?select=*&order=created_at.asc');
+      var r2 = await req('responses?select=survey_id');
+      var surveys = await r1.json();
+      var resps   = await r2.json();
+      var rc = {};
+      resps.forEach(function(r){ rc[r.survey_id] = (rc[r.survey_id]||0)+1; });
+      renderSurveys(tc, surveys, rc);
+    } else {
+      var r3 = await req('settings?select=key,value');
+      var settings = await r3.json();
+      renderSettings(tc, settings);
+    }
+  } catch(e) {
+    tc.innerHTML = '<div class="msg err">불러오지 못했습니다: '+e.message+'</div>';
+  }
+}
+
+function renderSurveys(tc, surveys, rc) {
+  var addForm =
+    '<div style="margin-bottom:2rem">' +
+    '<p class="sec-t">새 설문 추가</p>' +
+    '<div class="fg"><label class="fl">질문</label><input class="fi" id="nq" placeholder="질문 내용"></div>' +
+    '<div class="fg"><label class="fl">유형</label><select class="fs" id="nt" onchange="chgType()">' +
+      '<option value="객관식2">객관식 (2개)</option>' +
+      '<option value="객관식3" selected>객관식 (3개)</option>' +
+      '<option value="객관식4">객관식 (4개)</option>' +
+      '<option value="주관식">주관식</option>' +
+    '</select></div>' +
+    '<div id="ow">' +
+      '<div class="fg"><label class="fl">보기</label>' +
+        '<input class="fi" id="o1" placeholder="보기 1" style="margin-bottom:6px">' +
+        '<input class="fi" id="o2" placeholder="보기 2" style="margin-bottom:6px">' +
+        '<input class="fi" id="o3" placeholder="보기 3">' +
+      '</div>' +
+    '</div>' +
+    '<div class="fg"><label class="fl">날짜 (표시용)</label><input class="fi" id="nd" placeholder="예: 2026년 6월 22일"></div>' +
+    '<button class="btn" onclick="addSurvey()" style="margin-top:4px">설문 추가</button>' +
+    '<div id="am"></div>' +
+    '</div>';
+
+  var listHTML = surveys.length === 0
+    ? '<div class="empty">설문이 없습니다</div>'
+    : surveys.map(function(s) {
+        var extra = s.type==='주관식' ? '<button class="ib" onclick="showAns(\''+s.id+'\')">답변보기</button>' : '';
+        var tog = s.status==='현재'
+          ? '<button class="ib" onclick="doClose(\''+s.id+'\')">마감</button>'
+          : '<button class="ib" onclick="doOpen(\''+s.id+'\')">재개</button>';
+        return '<div class="sv-item" id="si-'+s.id+'">' +
+          '<p class="sv-q">'+s.question+'</p>' +
+          '<p class="sv-meta">'+(s.status==='현재'?'🟢 진행중':'⚫ 마감')+' · 응답 '+(rc[s.id]||0)+'명 · '+s.type+(s.date?' · '+s.date:'')+'</p>' +
+          '<div class="btn-row">'+tog+extra+
+            '<button class="ib r" id="db-'+s.id+'" onclick="step1(\''+s.id+'\')">삭제</button>' +
+          '</div>' +
+          '<div class="ans-wrap" id="aw-'+s.id+'"></div>' +
+        '</div>';
+      }).join('');
+
+  tc.innerHTML = addForm + '<p class="sec-t">설문 목록</p>' + listHTML;
+}
+
+function step1(id) {
+  var btn = document.getElementById('db-'+id);
+  if (!btn) return;
+  btn.textContent = '확인 클릭시 삭제';
+  btn.className = 'ib c';
+  btn.onclick = function() { step2(id); };
+}
+
+async function step2(id) {
+  var btn = document.getElementById('db-'+id);
+  if (btn) { btn.textContent = '삭제 중...'; btn.disabled = true; }
+  try {
+    var r = await del('surveys?id=eq.'+encodeURIComponent(id));
+    if (r.ok || r.status === 204) {
+      var el = document.getElementById('si-'+id);
+      if (el) el.remove();
+    } else {
+      var txt = await r.text();
+      alert('삭제 실패 ('+r.status+'): '+txt);
+      if (btn) { btn.textContent = '삭제'; btn.disabled = false; btn.className = 'ib r'; btn.onclick = function(){step1(id);}; }
+    }
+  } catch(e) {
+    alert('오류: '+e.message);
+    if (btn) { btn.textContent = '삭제'; btn.disabled = false; btn.className = 'ib r'; btn.onclick = function(){step1(id);}; }
+  }
+}
+
+async function doClose(id) {
+  await req('surveys?id=eq.'+id, {method:'PATCH', body:JSON.stringify({status:'지난'})});
+  showAdmin();
+}
+async function doOpen(id) {
+  await req('surveys?id=eq.'+id, {method:'PATCH', body:JSON.stringify({status:'현재'})});
+  showAdmin();
+}
+
+async function showAns(id) {
+  var aw = document.getElementById('aw-'+id);
+  if (!aw) return;
+  if (aw.style.display === 'block') { aw.style.display = 'none'; return; }
+  aw.style.display = 'block';
+  aw.innerHTML = '<div class="spin">불러오는 중...</div>';
+  var r = await req('responses?survey_id=eq.'+id+'&order=created_at.desc&select=answer,created_at');
+  var data = await r.json();
+  if (data.length === 0) { aw.innerHTML = '<div class="empty">답변이 없습니다</div>'; return; }
+  aw.innerHTML = '<p style="font-size:11px;font-weight:700;color:rgba(17,17,17,.4);margin-bottom:10px;">총 '+data.length+'개</p>' +
+    data.map(function(item) {
+      var d = new Date(item.created_at);
+      return '<div class="ans-item">'+item.answer+'<p class="ans-date">'+d.getFullYear()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getDate().toString().padStart(2,'0')+'</p></div>';
+    }).join('');
+}
+
+function chgType() {
+  var t = (document.getElementById('nt')||{}).value||'객관식3';
+  var w = document.getElementById('ow');
+  if (!w) return;
+  if (t==='주관식') { w.style.display='none'; return; }
+  w.style.display='block';
+  var n = parseInt(t.replace('객관식',''));
+  var h = '<div class="fg"><label class="fl">보기</label>';
+  for(var i=1;i<=n;i++) h += '<input class="fi" id="o'+i+'" placeholder="보기 '+i+'" style="margin-bottom:6px">';
+  h += '</div>';
+  w.innerHTML = h;
+}
+
+async function addSurvey() {
+  var q  = (document.getElementById('nq')||{}).value||'';
+  var t  = (document.getElementById('nt')||{}).value||'객관식3';
+  var d  = (document.getElementById('nd')||{}).value||'';
+  var am = document.getElementById('am');
+  q = q.trim();
+  if (!q) { if(am) am.innerHTML='<div class="msg err">질문을 입력해주세요</div>'; return; }
+  var body = {id:'q'+Date.now(), question:q, type:t, status:'현재', date:d.trim()};
+  if (t!=='주관식') {
+    var n = parseInt(t.replace('객관식',''));
+    for(var i=1;i<=n;i++){var el=document.getElementById('o'+i);body['option'+i]=el?(el.value||'').trim():'';}
+  }
+  try {
+    var r = await req('surveys', {method:'POST', body:JSON.stringify(body)});
+    if (r.ok || r.status===201) {
+      if(am) am.innerHTML='<div class="msg ok">추가되었습니다</div>';
+      setTimeout(showAdmin, 500);
+    } else {
+      var e = await r.text();
+      if(am) am.innerHTML='<div class="msg err">오류: '+e+'</div>';
+    }
+  } catch(e) { if(am) am.innerHTML='<div class="msg err">오류: '+e.message+'</div>'; }
+}
+
+function renderSettings(tc, settings) {
+  var m = {};
+  settings.forEach(function(s){ m[s.key]=s.value; });
+  tc.innerHTML =
+    '<p class="sec-t">헤더 텍스트 및 링크</p>' +
+    '<div style="margin-bottom:1rem;padding:12px;background:#F5F2EB;border:1px solid rgba(17,17,17,.1);font-size:11px;color:rgba(17,17,17,.5);">링크를 입력하면 클릭 시 해당 페이지로 이동합니다. 비워두면 링크 없이 텍스트만 표시됩니다.</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+      '<div class="fg"><label class="fl">헤더 1 텍스트</label><input class="fi" id="h1" value="'+(m.header1||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 1 링크</label><input class="fi" id="h1url" placeholder="https://" value="'+(m.header1url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 2 텍스트</label><input class="fi" id="h2" value="'+(m.header2||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 2 링크</label><input class="fi" id="h2url" placeholder="https://" value="'+(m.header2url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 3 텍스트</label><input class="fi" id="h3" value="'+(m.header3||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 3 링크</label><input class="fi" id="h3url" placeholder="https://" value="'+(m.header3url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 4 텍스트</label><input class="fi" id="h4" value="'+(m.header4||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 4 링크</label><input class="fi" id="h4url" placeholder="https://" value="'+(m.header4url||'')+'"></div>' +
+    '</div>' +
+    '<div class="fg"><label class="fl">푸터</label><input class="fi" id="ft" value="'+(m.footer||'')+'"></div>' +
+    '<button class="btn" onclick="saveSettings()" style="margin-top:8px">저장</button>' +
+    '<div id="cm"></div>';
+}
+
+async function saveSettings() {
+  var keys=['header1','header2','header3','header4','footer','header1url','header2url','header3url','header4url'];
+  var ids=['h1','h2','h3','h4','ft','h1url','h2url','h3url','h4url'];
+  var cm = document.getElementById('cm');
+  try {
+    for(var i=0;i<keys.length;i++){
+      var v=document.getElementById(ids[i]);
+      if(!v) continue;
+      await req('settings?key=eq.'+keys[i],{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({value:v.value})});
+    }
+    if(cm) cm.innerHTML='<div class="msg ok">저장되었습니다</div>';
+  } catch(e) {
+    if(cm) cm.innerHTML='<div class="msg err">오류가 발생했습니다</div>';
+  }
+}
+
+if (sessionStorage.getItem('adm')==='1') {
+  window.addEventListener('DOMContentLoaded', showAdmin);
+}
+</script>
+</body>
+</html>
