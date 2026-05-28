@@ -54,7 +54,10 @@ main{max-width:640px;margin:0 auto;padding:2rem 1.25rem 5rem;}
 <body>
 <header class="hdr">
   <span class="hdr-t">관리자 — 예술인의 목소리</span>
-  <a href="index.html" class="back">← 메인으로</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="https://www.instagram.com/voices_of_artists748" target="_blank" rel="noopener" class="back">인스타그램</a>
+    <a href="index.html" class="back">← 메인으로</a>
+  </div>
 </header>
 <main id="main">
   <div class="login-wrap">
@@ -178,6 +181,75 @@ function renderSurveys(tc, surveys, rc) {
       }).join('');
 
   tc.innerHTML = addForm + '<p class="sec-t">설문 목록</p>' + listHTML;
+}
+
+function editS(id) {
+  fetch(SB+'/rest/v1/surveys?id=eq.'+encodeURIComponent(id),{
+    headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json'}
+  }).then(function(r){return r.json();}).then(function(data){
+    if(!data||data.length===0) return;
+    var s = data[0];
+    var opts = [s.option1,s.option2,s.option3,s.option4].filter(Boolean);
+    var n = opts.length;
+    var el = document.getElementById('si-'+id);
+    if(!el) return;
+    
+    var h = '';
+    h += '<div class="sv-item" id="si-'+id+'" style="border-color:#1A8C5A;">';
+    h += '<div class="fg"><label class="fl">질문</label>';
+    h += '<input class="fi" id="eq-'+id+'"></div>';
+    
+    if(s.type !== '주관식') {
+      for(var i=0;i<opts.length;i++){
+        h += '<div class="fg"><label class="fl">보기 '+(i+1)+'</label>';
+        h += '<input class="fi" id="eo'+(i+1)+'-'+id+'"></div>';
+      }
+    }
+    
+    h += '<div class="fg"><label class="fl">날짜</label>';
+    h += '<input class="fi" id="ed-'+id+'"></div>';
+    h += '<div class="btn-row">';
+    h += '<button class="ib" style="background:#1A8C5A;color:#fff;border-color:#1A8C5A;" onclick="saveEdit(this)">저장</button>';
+    h += '<button class="ib" onclick="fetchTab()">취소</button>';
+    h += '</div></div>';
+    
+    el.outerHTML = h;
+    
+    var qEl = document.getElementById('eq-'+id);
+    if(qEl) qEl.value = s.question;
+    for(var j=0;j<opts.length;j++){
+      var oEl = document.getElementById('eo'+(j+1)+'-'+id);
+      if(oEl) oEl.value = opts[j];
+    }
+    var dEl = document.getElementById('ed-'+id);
+    if(dEl) dEl.value = s.date||'';
+  });
+}
+
+async function saveEdit(btn) {
+  var wrap = btn.closest('.sv-item');
+  if(!wrap) return;
+  var id = wrap.id.replace('si-','');
+  var qEl = document.getElementById('eq-'+id);
+  var dEl = document.getElementById('ed-'+id);
+  var q = qEl ? qEl.value : '';
+  var d = dEl ? dEl.value : '';
+  if(!q.trim()) { alert('질문을 입력해주세요'); return; }
+  var body = {question:q.trim(), date:d.trim()};
+  for(var i=1;i<=4;i++){
+    var oEl = document.getElementById('eo'+i+'-'+id);
+    if(oEl) body['option'+i] = oEl.value.trim();
+  }
+  try {
+    var r2 = await req('surveys?id=eq.'+encodeURIComponent(id),{
+      method:'PATCH', body:JSON.stringify(body)
+    });
+    if(r2.ok||r2.status===204) {
+      fetchTab();
+    } else {
+      alert('저장 실패');
+    }
+  } catch(e2) { alert('오류: '+e2.message); }
 }
 
 function step1(id) {
