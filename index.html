@@ -201,11 +201,23 @@ async function loadAll() {
 
 function applySettings(arr){
   var m={};arr.forEach(function(a){m[a.key]=a.value;});
-  if(m.header1)document.getElementById('s1').textContent=m.header1;
-  if(m.header2)document.getElementById('s2').textContent=m.header2;
-  if(m.header3)document.getElementById('s3').textContent=m.header3;
-  if(m.header4)document.getElementById('s4').textContent=m.header4;
+  applyStripe('s1', m.header1, m.header1url);
+  applyStripe('s2', m.header2, m.header2url);
+  applyStripe('s3', m.header3, m.header3url);
+  applyStripe('s4', m.header4, m.header4url);
   if(m.footer) document.getElementById('footer-txt').textContent=m.footer;
+}
+
+function applyStripe(id, text, url) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(text) {
+    if(url && url.trim()) {
+      el.innerHTML = '<a href="'+url.trim()+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;display:block;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">'+text+'</a>';
+    } else {
+      el.textContent = text;
+    }
+  }
 }
 
 function renderBlock(id,container){

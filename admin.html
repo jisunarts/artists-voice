@@ -273,12 +273,17 @@ function renderSettings(tc, settings) {
   var m = {};
   settings.forEach(function(s){ m[s.key]=s.value; });
   tc.innerHTML =
-    '<p class="sec-t">헤더 및 푸터</p>' +
-    '<div class="g2">' +
-      '<div class="fg"><label class="fl">헤더 1</label><input class="fi" id="h1" value="'+(m.header1||'')+'"></div>' +
-      '<div class="fg"><label class="fl">헤더 2</label><input class="fi" id="h2" value="'+(m.header2||'')+'"></div>' +
-      '<div class="fg"><label class="fl">헤더 3</label><input class="fi" id="h3" value="'+(m.header3||'')+'"></div>' +
-      '<div class="fg"><label class="fl">헤더 4</label><input class="fi" id="h4" value="'+(m.header4||'')+'"></div>' +
+    '<p class="sec-t">헤더 텍스트 및 링크</p>' +
+    '<div style="margin-bottom:1rem;padding:12px;background:#F5F2EB;border:1px solid rgba(17,17,17,.1);font-size:11px;color:rgba(17,17,17,.5);">링크를 입력하면 클릭 시 해당 페이지로 이동합니다. 비워두면 링크 없이 텍스트만 표시됩니다.</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+      '<div class="fg"><label class="fl">헤더 1 텍스트</label><input class="fi" id="h1" value="'+(m.header1||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 1 링크</label><input class="fi" id="h1url" placeholder="https://" value="'+(m.header1url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 2 텍스트</label><input class="fi" id="h2" value="'+(m.header2||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 2 링크</label><input class="fi" id="h2url" placeholder="https://" value="'+(m.header2url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 3 텍스트</label><input class="fi" id="h3" value="'+(m.header3||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 3 링크</label><input class="fi" id="h3url" placeholder="https://" value="'+(m.header3url||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 4 텍스트</label><input class="fi" id="h4" value="'+(m.header4||'')+'"></div>' +
+      '<div class="fg"><label class="fl">헤더 4 링크</label><input class="fi" id="h4url" placeholder="https://" value="'+(m.header4url||'')+'"></div>' +
     '</div>' +
     '<div class="fg"><label class="fl">푸터</label><input class="fi" id="ft" value="'+(m.footer||'')+'"></div>' +
     '<button class="btn" onclick="saveSettings()" style="margin-top:8px">저장</button>' +
@@ -286,8 +291,8 @@ function renderSettings(tc, settings) {
 }
 
 async function saveSettings() {
-  var keys=['header1','header2','header3','header4','footer'];
-  var ids=['h1','h2','h3','h4','ft'];
+  var keys=['header1','header2','header3','header4','footer','header1url','header2url','header3url','header4url'];
+  var ids=['h1','h2','h3','h4','ft','h1url','h2url','h3url','h4url'];
   var cm = document.getElementById('cm');
   try {
     for(var i=0;i<keys.length;i++){
