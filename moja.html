@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모이자!</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:#111;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-family:'Noto Sans KR',sans-serif;
+  overflow:hidden;
+  cursor:pointer;
+}
+.title{
+  color:#CCFF00;
+  font-size:48px;
+  font-weight:700;
+  letter-spacing:.05em;
+  margin-bottom:2rem;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.gif-wrap{
+  width:300px;
+  max-width:90vw;
+  border-radius:16px;
+  overflow:hidden;
+  border:3px solid #CCFF00;
+  box-shadow:0 0 40px rgba(204,255,0,.3);
+}
+.gif-wrap img{
+  width:100%;
+  display:block;
+}
+.sub{
+  color:rgba(255,255,255,.4);
+  font-size:13px;
+  margin-top:1.5rem;
+  letter-spacing:.04em;
+}
+.back{
+  position:fixed;
+  top:1.25rem;
+  left:1.25rem;
+  color:rgba(255,255,255,.4);
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+  letter-spacing:.06em;
+}
+.back:hover{color:#fff;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+</head>
+<body onclick="changeGif()">
+
+<a href="index.html" class="back">← 설문으로</a>
+
+<p class="title">모이자! 🎉</p>
+
+<div class="gif-wrap">
+  <img id="gif" src="" alt="모이자!">
+</div>
+
+<p class="sub">클릭하면 바뀌어요</p>
+
+<script>
+var GIFS = [
+  'CjmvTCZf2U3p09Cn0h',
+  'e2pXtdQezWkSDIQ1y6',
+  'h3RBBSxNGejUl7GfWI',
+  'Gp73INt5vAybZZQsUC',
+  'FxTm1ngVq2oliGeHUG',
+  '0cGsLc9Q5XTLE0yaGm',
+  'n5eCHtISR0ThfxQWsI',
+  'YeRz5g1sHuCGEGvdNs'
+];
+
+var current = -1;
+
+function changeGif() {
+  var next;
+  do { next = Math.floor(Math.random()*GIFS.length); } while(next === current && GIFS.length > 1);
+  current = next;
+  document.getElementById('gif').src = 'https://media.giphy.com/media/'+GIFS[current]+'/giphy.gif';
+}
+
+changeGif();
+</script>
+</body>
+</html>
