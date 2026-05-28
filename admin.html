@@ -174,6 +174,7 @@ function renderSurveys(tc, surveys, rc) {
           '<p class="sv-q">'+s.question+'</p>' +
           '<p class="sv-meta">'+(s.status==='현재'?'🟢 진행중':'⚫ 마감')+' · 응답 '+(rc[s.id]||0)+'명 · '+s.type+(s.date?' · '+s.date:'')+'</p>' +
           '<div class="btn-row">'+tog+extra+
+            '<button class="ib" onclick="editS(\''+s.id+'\')">수정</button>' +
             '<button class="ib r" id="db-'+s.id+'" onclick="step1(\''+s.id+'\')">삭제</button>' +
           '</div>' +
           '<div class="ans-wrap" id="aw-'+s.id+'"></div>' +
