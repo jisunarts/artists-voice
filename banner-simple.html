@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>예술인의 목소리</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --lime:#CCFF00;--orange:#FF6B2B;--green:#1A8C5A;
+  --ink:#111;--serif:'Noto Serif KR',serif;--sans:'Noto Sans KR',sans-serif;
+}
+body{margin:0;padding:0;overflow:hidden;}
+.banner{background:var(--ink);height:52px;display:flex;align-items:center;cursor:pointer;}
+.left{background:var(--lime);height:100%;display:flex;align-items:center;padding:0 1.25rem;flex-shrink:0;}
+.left-t{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--ink);}
+.mid{flex:1;padding:0 1.25rem;display:flex;align-items:center;gap:10px;}
+.mid-t{font-size:12px;font-weight:500;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.right{background:var(--orange);height:100%;display:flex;align-items:center;padding:0 1.25rem;flex-shrink:0;}
+.right-t{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:blink 2s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+</style>
+</head>
+<body>
+<div class="banner" onclick="window.open('https://artists-voice.pages.dev','_blank')">
+  <div class="left">
+    <span class="left-t" id="brand-txt">예술인의 목소리</span>
+  </div>
+  <div class="mid">
+    <span class="dot"></span>
+    <span class="mid-t" id="mid-txt">설문 진행 중</span>
+  </div>
+  <div class="right">
+    <span class="right-t">설문 참여하기 →</span>
+  </div>
+</div>
+
+<script>
+var SB  = 'https://ekwqfkcfeehhssxkzrxm.supabase.co';
+var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVrd3Fma2NmZWVoaHNzeGt6cnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NTk4OTksImV4cCI6MjA5NTQzNTg5OX0.js2SaqzgE8nI6EV6DO_lNscNTRSQuCKczmwIbucXrU8';
+
+fetch(SB+'/rest/v1/settings?select=key,value',{
+  headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}
+}).then(function(r){return r.json();}).then(function(data){
+  var m={};data.forEach(function(d){m[d.key]=d.value;});
+  if(m.header1) document.getElementById('brand-txt').textContent=m.header1;
+});
+
+fetch(SB+'/rest/v1/surveys?select=question&status=eq.현재&order=created_at.asc&limit=1',{
+  headers:{'apikey':KEY,'Authorization':'Bearer '+KEY}
+}).then(function(r){return r.json();}).then(function(data){
+  if(data&&data.length>0){
+    var q = data[0].question;
+    document.getElementById('mid-txt').textContent = q.length>40 ? q.substring(0,40)+'...' : q;
+  }
+});
+</script>
+</body>
+</html>
